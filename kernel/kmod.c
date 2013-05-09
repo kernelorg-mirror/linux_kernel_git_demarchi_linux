@@ -67,12 +67,12 @@ static DECLARE_RWSEM(umhelper_sem);
 /*
 	modprobe_path is set via /proc/sys.
 */
-char modprobe_path[KMOD_PATH_LEN] = "/sbin/modprobe";
+char modprobe_path[KMOD_PATH_LEN] = "/sbin/modprobe -q --";
 
 static void free_modprobe_argv(struct subprocess_info *info)
 {
 	kfree(info->argv[3]); /* check call_modprobe() */
-	kfree(info->argv);
+	argv_free(info->argv);
 }
 
 static int call_modprobe(char *module_name, int wait)
@@ -84,8 +84,10 @@ static int call_modprobe(char *module_name, int wait)
 		"PATH=/sbin:/usr/sbin:/bin:/usr/bin",
 		NULL
 	};
+	int argc;
+	char **argv;
 
-	char **argv = kmalloc(sizeof(char *[5]), GFP_KERNEL);
+	argv = argv_split(GFP_KERNEL, modprobe_path, &argc, 1);
 	if (!argv)
 		goto out;
 
@@ -93,13 +95,8 @@ static int call_modprobe(char *module_name, int wait)
 	if (!module_name)
 		goto free_argv;
 
-	argv[0] = modprobe_path;
-	argv[1] = "-q";
-	argv[2] = "--";
-	argv[3] = module_name;	/* check free_modprobe_argv() */
-	argv[4] = NULL;
-
-	info = call_usermodehelper_setup(modprobe_path, argv, envp, GFP_KERNEL,
+	argv[argc] = module_name;	/* check free_modprobe_argv() */
+	info = call_usermodehelper_setup(argv[0], argv, envp, GFP_KERNEL,
 					 NULL, free_modprobe_argv, NULL);
 	if (!info)
 		goto free_module_name;
@@ -109,7 +106,7 @@ static int call_modprobe(char *module_name, int wait)
 free_module_name:
 	kfree(module_name);
 free_argv:
-	kfree(argv);
+	argv_free(argv);
 out:
 	return -ENOMEM;
 }
