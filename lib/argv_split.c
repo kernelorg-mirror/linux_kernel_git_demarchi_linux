@@ -43,20 +43,21 @@ EXPORT_SYMBOL(argv_free);
  * argv_split - split a string at whitespace, returning an argv
  * @gfp: the GFP mask used to allocate memory
  * @str: the string to be split
- * @argcp: returned argument count
+ * @argcp: returned argument count without counting extras
+ * @extra: room left for extra arguments to be filled by caller
  *
  * Returns an array of pointers to strings which are split out from
  * @str.  This is performed by strictly splitting on white-space; no
  * quote processing is performed.  Multiple whitespace characters are
  * considered to be a single argument separator.  The returned array
- * is always NULL-terminated.  Returns NULL on memory allocation
- * failure.
+ * is always NULL-terminated, after any possible extra argument.
+ * Returns NULL on memory allocation failure.
  *
  * The source string at `str' may be undergoing concurrent alteration via
  * userspace sysctl activity (at least).  The argv_split() implementation
  * attempts to handle this gracefully by taking a local copy to work on.
  */
-char **argv_split(gfp_t gfp, const char *str, int *argcp)
+char **argv_split(gfp_t gfp, const char *str, int *argcp, unsigned int extra)
 {
 	char *argv_str;
 	bool was_space;
@@ -68,7 +69,7 @@ char **argv_split(gfp_t gfp, const char *str, int *argcp)
 		return NULL;
 
 	argc = count_argc(argv_str);
-	argv = kmalloc(sizeof(*argv) * (argc + 2), gfp);
+	argv = kmalloc(sizeof(*argv) * (argc + 2 + extra), gfp);
 	if (!argv) {
 		kfree(argv_str);
 		return NULL;
@@ -85,7 +86,7 @@ char **argv_split(gfp_t gfp, const char *str, int *argcp)
 			*argv++ = argv_str;
 		}
 	}
-	*argv = NULL;
+	argv[extra] = NULL;
 
 	if (argcp)
 		*argcp = argc;

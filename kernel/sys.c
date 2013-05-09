@@ -2196,7 +2196,7 @@ static int __orderly_poweroff(bool force)
 	};
 	int ret;
 
-	argv = argv_split(GFP_KERNEL, poweroff_cmd, NULL);
+	argv = argv_split(GFP_KERNEL, poweroff_cmd, NULL, 0);
 	if (argv) {
 		ret = call_usermodehelper(argv[0], argv, envp, UMH_WAIT_EXEC);
 		argv_free(argv);

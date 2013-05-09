@@ -770,7 +770,7 @@ int traceprobe_command(const char *buf, int (*createfn)(int, char **))
 
 	argc = 0;
 	ret = 0;
-	argv = argv_split(GFP_KERNEL, buf, &argc);
+	argv = argv_split(GFP_KERNEL, buf, &argc, 0);
 	if (!argv)
 		return -ENOMEM;
 

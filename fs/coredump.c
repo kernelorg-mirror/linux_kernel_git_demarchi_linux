@@ -565,7 +565,7 @@ void do_coredump(siginfo_t *siginfo)
 			goto fail_dropcount;
 		}
 
-		helper_argv = argv_split(GFP_KERNEL, cn.corename+1, NULL);
+		helper_argv = argv_split(GFP_KERNEL, cn.corename+1, NULL, 0);
 		if (!helper_argv) {
 			printk(KERN_WARNING "%s failed to allocate memory\n",
 			       __func__);

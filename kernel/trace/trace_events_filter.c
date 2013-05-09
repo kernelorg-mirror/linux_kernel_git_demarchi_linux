@@ -1981,7 +1981,7 @@ ftrace_function_filter_re(char *buf, int len, int *count)
 	while ((sep = strchr(str, ',')))
 		*sep = ' ';
 
-	re = argv_split(GFP_KERNEL, str, count);
+	re = argv_split(GFP_KERNEL, str, count, 0);
 	kfree(str);
 	return re;
 }
