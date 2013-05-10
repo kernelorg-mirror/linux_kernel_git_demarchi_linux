@@ -1593,6 +1593,13 @@ menuconfig MODULES
 
 if MODULES
 
+config DEFAULT_MODULE_LOAD_BIN
+	string "Default module load binary"
+	default "/sbin/modprobe -q --"
+	help
+	  This option determines the default executable to be called when a
+	  module is requested to be loaded via request_module().
+
 config MODULE_FORCE_LOAD
 	bool "Forced module loading"
 	default n

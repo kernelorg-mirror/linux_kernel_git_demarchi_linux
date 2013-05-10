@@ -67,7 +67,7 @@ static DECLARE_RWSEM(umhelper_sem);
 /*
 	modprobe_path is set via /proc/sys.
 */
-char modprobe_path[KMOD_PATH_LEN] = "/sbin/modprobe -q --";
+char modprobe_path[KMOD_PATH_LEN] = CONFIG_DEFAULT_MODULE_LOAD_BIN;
 
 static void free_modprobe_argv(struct subprocess_info *info)
 {
