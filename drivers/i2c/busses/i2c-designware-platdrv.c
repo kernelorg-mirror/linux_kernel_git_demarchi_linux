@@ -318,7 +318,7 @@ static int dw_i2c_resume(struct device *dev)
 	clk_prepare_enable(i_dev->clk);
 
 	if (!i_dev->pm_runtime_disabled)
-		i2c_dw_init(i_dev);
+		i2c_dw_enable(i_dev);
 
 	return 0;
 }
