@@ -375,8 +375,12 @@ int i2c_dw_init(struct dw_i2c_dev *dev)
 	/* configure the i2c master */
 	dw_writel(dev, dev->master_cfg , DW_IC_CON);
 
+	/* Enable the adapter */
+	__i2c_dw_enable(dev, true);
+
 	if (dev->release_lock)
 		dev->release_lock(dev);
+
 	return 0;
 }
 EXPORT_SYMBOL_GPL(i2c_dw_init);
@@ -405,9 +409,6 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
 	struct i2c_msg *msgs = dev->msgs;
 	u32 ic_con, ic_tar = 0;
 
-	/* Disable the adapter */
-	__i2c_dw_enable(dev, false);
-
 	/* if the slave address is ten bit address, enable 10BITADDR */
 	ic_con = dw_readl(dev, DW_IC_CON);
 	if (msgs[dev->msg_write_idx].flags & I2C_M_TEN) {
@@ -433,9 +434,6 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
 
 	/* enforce disabled interrupts (due to HW issues) */
 	i2c_dw_disable_int(dev);
-
-	/* Enable the adapter */
-	__i2c_dw_enable(dev, true);
 
 	/* Clear and enable interrupts */
 	i2c_dw_clear_int(dev);
@@ -663,15 +661,6 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
 		ret = -ETIMEDOUT;
 		goto done;
 	}
-
-	/*
-	 * We must disable the adapter before unlocking the &dev->lock mutex
-	 * below. Otherwise the hardware might continue generating interrupts
-	 * which in turn causes a race condition with the following transfer.
-	 * Needs some more investigation if the additional interrupts are
-	 * a hardware bug or this driver doesn't handle them correctly yet.
-	 */
-	__i2c_dw_enable(dev, false);
 
 	if (dev->msg_err) {
 		ret = dev->msg_err;
