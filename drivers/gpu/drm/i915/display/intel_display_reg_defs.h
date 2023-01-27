@@ -16,21 +16,22 @@
  * Named helper wrappers around _PICK_EVEN() and _PICK_EVEN_2RANGES().
  */
 #define _PIPE(pipe, a, b)		_PICK_EVEN(pipe, a, b)
+#define _PIPE3(pipe, a, b, c)		_PICK_EVEN_2RANGES(pipe, 1, a, a, b, c)
 #define _PLANE(plane, a, b)		_PICK_EVEN(plane, a, b)
 #define _TRANS(tran, a, b)		_PICK_EVEN(tran, a, b)
 #define _PORT(port, a, b)		_PICK_EVEN(port, a, b)
+#define _PORT3(port, a, b, c)		_PICK_EVEN_2RANGES(port, 1, a, a, b, c)
 #define _PLL(pll, a, b)			_PICK_EVEN(pll, a, b)
 #define _PHY(phy, a, b)			_PICK_EVEN(phy, a, b)
 
 #define _MMIO_PIPE(pipe, a, b)		_MMIO(_PIPE(pipe, a, b))
+#define _MMIO_PIPE3(pipe, a, b, c)	_MMIO(_PIPE3(pipe, a, b, c))
 #define _MMIO_PLANE(plane, a, b)	_MMIO(_PLANE(plane, a, b))
 #define _MMIO_TRANS(tran, a, b)		_MMIO(_TRANS(tran, a, b))
 #define _MMIO_PORT(port, a, b)		_MMIO(_PORT(port, a, b))
+#define _MMIO_PORT3(port, a, b, c)	_MMIO(_PORT3(port, a, b, c))
 #define _MMIO_PLL(pll, a, b)		_MMIO(_PLL(pll, a, b))
 #define _MMIO_PHY(phy, a, b)		_MMIO(_PHY(phy, a, b))
-
-#define _MMIO_PIPE3(pipe, a, b, c)	_MMIO(_PICK_EVEN_2RANGES(pipe, 1, a, a, b, c))
-#define _MMIO_PORT3(pipe, a, b, c)	_MMIO(_PICK_EVEN_2RANGES(pipe, 1, a, a, b, c))
 
 /*
  * Device info offset array based helpers for groups of registers with unevenly
